@@ -23,7 +23,7 @@ def token_required(f):
             current_user = User.query.filter_by(public_id=data['public_id']).first()
         except:
             return jsonify({'message': 'Token is invalid!!!'}), 401
-        
+
         return f(current_user,*args,**kwargs)
     return decorated
 
@@ -57,11 +57,10 @@ def get_one_user(current_user,public_id):
     return jsonify({'user':user_data})
 
 @app.route('/users',methods=['POST'])
-@token_required
-def create_user(current_user):
+def create_user():
     data = request.get_json()
     hashed_password = generate_password_hash(data['password'],method='sha256')
-    new_user = User(public_id=str(uuid.uuid4()), name=data['name'], password=hashed_password,admin=False)
+    new_user = User(public_id=str(uuid.uuid4()), name=data['name'], password=hashed_password,admin=data['admin'])
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'message' :'New User has been created!'})
@@ -86,8 +85,8 @@ def delete_user(current_user,public_id):
         return jsonify({'message':'User not Found!!!!'})
     db.session.delete(user)
     db.session.commit()
-    return jsonify({ 
-            'message': 'This user {0} has been deleted!! ID: {1}'.format(str(userName),str(userId)) 
+    return jsonify({
+            'message': 'This user {0} has been deleted!! ID: {1}'.format(str(userName),str(userId))
                 })
 
 
@@ -97,7 +96,7 @@ def login():
 
     if not auth or not auth.username or not auth.password:
         return make_response('Could not verify ',401,{'WWW-Authenticate':'Basic realm="Login requierd!"'})
-    
+
     user = User.query.filter_by(name=auth.username).first()
 
     if not user:
@@ -105,7 +104,6 @@ def login():
 
     if check_password_hash(user.password,auth.password):
         token = jwt.encode({'public_id':user.public_id,'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
-        return jsonify({'token':token.decode('UTF-8')})
+        return jsonify({'token':token.decode('UTF-8'),'user_id':user.id,'isAdmin':user.admin})
 
     return make_response('Could not verify ',401,{'WWW-Authenticate':'Basic realm="Login requierd!"'})
-

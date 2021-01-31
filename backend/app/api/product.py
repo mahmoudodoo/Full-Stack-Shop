@@ -46,7 +46,7 @@ def create_product():
 
 @app.route('/product/<product_id>',methods=['DELETE'])
 def delete_product(product_id):
-    product = product.query.filter_by(product_id=product_id).first()
+    product = Product.query.filter_by(id=product_id).first()
     if not product:
         return jsonify({'message':'Product not Found!!!!'})
     db.session.delete(product)

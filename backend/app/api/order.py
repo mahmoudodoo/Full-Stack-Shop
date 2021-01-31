@@ -14,7 +14,7 @@ def get_all_orders():
         order_data['id'] = order.id
         order_data['totalAmount'] = order.totalAmount
         order_data['user_id'] = order.user_id
-        order_data['product_id'] = order.product_id
+        order_data['date'] = order.date
         output.append(order_data)
     return jsonify({'orders':output})
 
@@ -27,13 +27,13 @@ def get_order(order_id):
     order_data['id'] = order.id
     order_data['totalAmount'] = order.totalAmount
     order_data['user_id'] = order.user_id
-    order_data['product_id'] = order.product_id
+    order_data['date'] = order.date
     return jsonify({'order':order_data})
 
 @app.route('/order', methods=['POST'])
 def create_order():
     data = request.get_json()
-    new_order = Order(totalAmount=data['totalAmount'],user_id=data['user_id'],product_id=data['product_id'])
+    new_order = Order(totalAmount=data['totalAmount'],user_id=data['user_id'])
     db.session.add(new_order)
     db.session.commit()
     return jsonify({'message':'Order has been added!!!'})
