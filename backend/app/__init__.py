@@ -11,3 +11,4 @@ migrate = Migrate(app, db)
 
 from app.models import User,Order,Product
 from app.api import user,order,product
+from app.views import admin_view

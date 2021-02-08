@@ -13,8 +13,11 @@ const LoginScreen = props =>{
   const [token,setToken] = useState('')
   const [userId,setUserId] = useState('')
 
+
+ 
   const dispatch = useDispatch()
   const  loginHandler = async () =>{
+
 
 
     var headers = new Headers();
@@ -51,7 +54,11 @@ const LoginScreen = props =>{
         <TouchableOpacity style={styles.loginButton} onPress={loginHandler}>
             <Text style={styles.text}>Login!</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.register} onPress={() => props.navigation.navigate('register')}>
+        <TouchableOpacity style={styles.register} onPress={() => { 
+          props.navigation.navigate('register')
+        } 
+          
+          }>
             <Text style={styles.text}>Register Here!</Text>
         </TouchableOpacity>
       </ScrollView>
